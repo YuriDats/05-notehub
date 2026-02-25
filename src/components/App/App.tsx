@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import css from "./App.module.css";
 import Modal from "../Modal/Modal";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import fetchNotes from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
-import toast from "react-hot-toast";
 import Pagination from "../Pagination/Pagination";
 import SearchBox from "../SearchBox/SearchBox";
 import { useDebounce} from "use-debounce";
 import NoteForm from "../NoteForm/NoteForm";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import Loader from "../Loader/Loader";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,14 +31,6 @@ const { data, isError, isLoading } = useQuery({
   placeholderData: keepPreviousData,
 });
 
-  useEffect(() => {
-    if (isError) {
-      toast("Error!!!!!!!");
-    }
-    if (isLoading) {
-      toast("Loading......");
-    }
-  }, [isError, isLoading]);
 
   const handleSudmit = (newValue: string) => {
     setSearch(newValue);
@@ -48,11 +41,13 @@ const { data, isError, isLoading } = useQuery({
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
+          {isError && <ErrorMessage/>}
+          {isLoading && <Loader/>}
           
           {<SearchBox text={search} onChange={handleSudmit} />}
-          {search && data?.totalPages && (
+          {search && data?.totalPages && data.totalPages > 1 && (
             <Pagination
-              totalPages={data.totalPages || 0}
+              totalPages={data.totalPages}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
