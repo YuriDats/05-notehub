@@ -53,7 +53,7 @@ const { data, isError, isLoading, error } = useQuery({
           {isError && toast("Error!!!!!!!")}
           {search && data?.totalPages && (
             <Pagination
-              totalPages={data.totalPages}
+              totalPages={search && data?.totalPages > 1 ? data.totalPages : 1}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
@@ -63,7 +63,7 @@ const { data, isError, isLoading, error } = useQuery({
             <Modal onClose={() => setIsModalOpen(false)}><NoteForm onClose={()=> setIsModalOpen(false)}/></Modal>
           )}
         </header>
-        {data && <NoteList notes={data.notes} />}
+        {data && data.notes.length > 0 && <NoteList notes={ data.notes} />}
       </div>
     </>
   );
