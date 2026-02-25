@@ -7,7 +7,6 @@ import NoteList from "../NoteList/NoteList";
 import toast from "react-hot-toast";
 import Pagination from "../Pagination/Pagination";
 import SearchBox from "../SearchBox/SearchBox";
-import axios from "axios";
 import { useDebounce} from "use-debounce";
 import NoteForm from "../NoteForm/NoteForm";
 
@@ -19,7 +18,7 @@ export default function App() {
   const [debouncedSearch] = useDebounce(search, 300);
 
 
-const { data, isError, isLoading, error } = useQuery({
+const { data, isError, isLoading } = useQuery({
   queryKey: ["notes", currentPage, debouncedSearch],
   queryFn: () =>
     fetchNotes({
@@ -32,11 +31,13 @@ const { data, isError, isLoading, error } = useQuery({
 });
 
   useEffect(() => {
-    if (error && axios.isAxiosError(error)) {
-      console.log("Status:", error.response?.status);
-      console.log("Response data:", error.response?.data);
+    if (isError) {
+      toast("Error!!!!!!!");
     }
-  }, [error]);
+    if (isLoading) {
+      toast("Loading......");
+    }
+  }, [isError, isLoading]);
 
   const handleSudmit = (newValue: string) => {
     setSearch(newValue);
@@ -49,11 +50,9 @@ const { data, isError, isLoading, error } = useQuery({
         <header className={css.toolbar}>
           
           {<SearchBox text={search} onChange={handleSudmit} />}
-          {isLoading && toast("Loading......")}
-          {isError && toast("Error!!!!!!!")}
           {search && data?.totalPages && (
             <Pagination
-              totalPages={search && data?.totalPages > 1 ? data.totalPages : 1}
+              totalPages={data.totalPages || 0}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
