@@ -45,7 +45,7 @@ const { data, isError, isLoading } = useQuery({
           {isLoading && <Loader/>}
           
           {<SearchBox text={search} onChange={handleSudmit} />}
-          {search && data?.totalPages && data.totalPages > 1 && (
+          {data?.totalPages && data.totalPages > 1 && (
             <Pagination
               totalPages={data.totalPages}
               currentPage={currentPage}
