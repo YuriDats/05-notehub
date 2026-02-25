@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import css from "./App.module.css";
 import Modal from "../Modal/Modal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import fetchNotes from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
 import toast from "react-hot-toast";
@@ -28,6 +28,7 @@ const { data, isError, isLoading, error } = useQuery({
       search: debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
     }),
   retry: false,
+  placeholderData: keepPreviousData,
 });
 
   useEffect(() => {
@@ -50,9 +51,9 @@ const { data, isError, isLoading, error } = useQuery({
           {<SearchBox text={search} onChange={handleSudmit} />}
           {isLoading && toast("Loading......")}
           {isError && toast("Error!!!!!!!")}
-          {search && data?.totalPage && (
+          {search && data?.totalPages && (
             <Pagination
-              prePage={data.totalPage}
+              totalPages={data.totalPages}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />

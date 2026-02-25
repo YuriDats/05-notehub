@@ -5,10 +5,10 @@ const token = import.meta.env.VITE_NOTEHUB_TOKEN;
 
 interface FetchNotesResponse {
   notes: Note[];
-  totalPage: number;
+  totalPages: number;
 }
 
-interface Pageination {
+interface Pagination {
     page: number;
     perPage: number;
     search?: string;
@@ -19,7 +19,7 @@ const api = axios.create({
   headers: { Authorization: `Bearer ${token}` },
 });
 
-export default async function fetchNotes(params: Pageination): Promise<FetchNotesResponse> {
+export default async function fetchNotes(params: Pagination): Promise<FetchNotesResponse> {
   const { data } = await api.get<FetchNotesResponse>("/notes",{params});
   
   return data;
@@ -36,8 +36,8 @@ interface PostNotes {
     tag: NoteType;
 }
 
-export const createNote = async (taskData: PostNotes) => {
-    const { data } = await api.post<Note>(`/notes/`, taskData);
+export const createNote = async (params: PostNotes) => {
+    const { data } = await api.post<Note>(`/notes/`, params);
   return data;
 
 }
